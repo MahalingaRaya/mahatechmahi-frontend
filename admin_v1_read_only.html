@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maha Tech Mahi Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 40px; }
+        h1 { color: #1a1a1a; text-align: center; margin-bottom: 40px;}
+
+        /* Form Styles */
+        .form-container {
+            background: white; padding: 30px; border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto 50px auto;
+        }
+        input, textarea {
+            width: 100%; padding: 12px; margin: 8px 0 20px 0;
+            border: 1px solid #e0e0e0; border-radius: 8px; box-sizing: border-box;
+        }
+        button.add-btn {
+            background-color: #007bff; color: white; padding: 12px; border: none;
+            border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600;
+        }
+        button.add-btn:hover { background-color: #0056b3; }
+
+        /* Course Card Grid */
+        #course-container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
+        .course-card { 
+            background: white; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
+            width: 300px; overflow: hidden; transition: transform 0.3s ease;
+        }
+        .course-card:hover { transform: translateY(-10px); }
+        
+        .card-image { width: 100%; height: 180px; object-fit: cover; background-color: #ddd; }
+        .card-content { padding: 20px; }
+        .course-title { color: #333; margin-top: 0; font-size: 1.2em; }
+        
+        /* NEW: Button Styles */
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        
+        .watch-btn {
+            flex: 1; text-align: center; text-decoration: none;
+            background-color: #ff0000; color: white; padding: 8px; border-radius: 6px;
+            font-size: 0.9em; font-weight: bold;
+        }
+        .watch-btn:hover { background-color: #cc0000; }
+
+        .delete-btn {
+            background-color: #ffeff0; color: #d63384; border: none; padding: 8px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: bold;
+        }
+        .delete-btn:hover { background-color: #ffe0e3; }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Maha Tech Mahi Dashboard</h1>
+
+    <div class="form-container">
+        <h3 style="margin-top:0">Add New Course</h3>
+        <input type="text" id="newTitle" placeholder="Course Title">
+        <input type="text" id="newImage" placeholder="Image URL (Paste link)">
+        
+        <input type="text" id="newYoutubeId" placeholder="YouTube Video ID (e.g., dXk_1M8tSSw)">
+        
+        <textarea id="newDesc" rows="3" placeholder="Description"></textarea>
+        <button class="add-btn" onclick="addCourse()">+ Create Course</button>
+    </div>
+
+    <div id="course-container"></div>
+
+    <script>
+        const API_URL = "http://localhost:8081/api/courses";
+
+        async function fetchCourses() {
+            const response = await fetch(API_URL);
+            const courses = await response.json();
+            const container = document.getElementById("course-container");
+            container.innerHTML = ""; 
+
+            courses.forEach(course => {
+                const card = document.createElement("div");
+                card.className = "course-card";
+                
+                const imageSrc = course.imageUrl ? course.imageUrl : "https://placehold.co/600x400?text=No+Image";
+
+                // Generate YouTube Link
+                let watchButtonHtml = "";
+                if (course.youtubeId) {
+                    watchButtonHtml = `<a href="https://www.youtube.com/watch?v=${course.youtubeId}" target="_blank" class="watch-btn">▶ Watch Class</a>`;
+                } else {
+                    watchButtonHtml = `<span style="color:#aaa; font-size:0.8em; align-self:center;">Coming Soon</span>`;
+                }
+
+                card.innerHTML = `
+                    <img src="${imageSrc}" class="card-image">
+                    <div class="card-content">
+                        <h3 class="course-title">${course.title}</h3>
+                        <p style="color:#666; font-size: 0.95em;">${course.description}</p>
+                        
+                        <div class="btn-group">
+                            ${watchButtonHtml}
+                            <button class="delete-btn" onclick="deleteCourse(${course.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function addCourse() {
+            const title = document.getElementById("newTitle").value;
+            const desc = document.getElementById("newDesc").value;
+            const imageUrl = document.getElementById("newImage").value; 
+            const youtubeId = document.getElementById("newYoutubeId").value; // Get Video ID
+
+            if(!title) return alert("Please enter a Title!");
+
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    title: title, 
+                    description: desc,
+                    imageUrl: imageUrl,
+                    youtubeId: youtubeId // Send to Java!
+                })
+            });
+
+            // Clear all boxes
+            document.getElementById("newTitle").value = "";
+            document.getElementById("newDesc").value = "";
+            document.getElementById("newImage").value = "";
+            document.getElementById("newYoutubeId").value = "";
+            fetchCourses(); 
+        }
+
+        async function deleteCourse(id) {
+            if(confirm("Delete this course?")) {
+                await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                fetchCourses();
+            }
+        }
+
+        fetchCourses();
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maha Tech Mahi Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 40px; }
+        
+        .form-container { 
+            background: white; padding: 30px; border-radius: 15px; 
+            max-width: 800px; margin: 0 auto 50px auto; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #007bff;
+        }
+
+        input, textarea { 
+            width: 100%; padding: 12px; margin: 8px 0 20px 0; 
+            border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;
+        }
+
+        /* Buttons */
+        .action-btn { 
+            padding: 12px; cursor: pointer; width: 100%; border: none; 
+            border-radius: 8px; color: white; font-weight: bold; font-size: 1.1em;
+        }
+        .save-btn { background-color: #28a745; }
+        .cancel-btn { background-color: #6c757d; margin-top: 10px; display: none; }
+
+        /* Card Styles */
+        #course-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+        .course-card { 
+            background: white; padding: 20px; border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; position: relative;
+        }
+        .card-actions { display: flex; justify-content: space-between; margin-top: 15px; }
+        
+        .edit-btn { background-color: #ffc107; color: black; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;}
+        .delete-btn { background-color: #dc3545; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align:center">🚀 Admin Dashboard</h1>
+
+    <div class="form-container">
+        <h3 id="form-title">Add New Content</h3>
+        
+        <input type="hidden" id="editId">
+
+        <input type="text" id="newTitle" placeholder="Title (e.g. Java Variables)">
+        <input type="text" id="newImage" placeholder="Image URL">
+        <input type="text" id="newYoutubeId" placeholder="YouTube Video ID (Optional)">
+        <textarea id="newDesc" rows="2" placeholder="Short Summary"></textarea>
+        
+        <label><strong>Full Blog Content (HTML Allowed):</strong></label>
+        <textarea id="newContent" rows="8" placeholder="<p>Write content here...</p>"></textarea>
+        
+        <button id="saveBtn" class="action-btn save-btn" onclick="saveCourse()">+ Publish Content</button>
+        <button id="cancelBtn" class="action-btn cancel-btn" onclick="resetForm()">Cancel Edit</button>
+    </div>
+
+    <div id="course-container"></div>
+
+    <script>
+        const API_URL = "http://localhost:8081/api/courses";
+        let coursesData = []; // Store data locally to fill the form easily
+
+        // 1. Fetch and Display
+        async function fetchCourses() {
+            const response = await fetch(API_URL);
+            coursesData = await response.json(); // Save to variable
+            const container = document.getElementById("course-container");
+            container.innerHTML = ""; 
+
+            coursesData.forEach(course => {
+                const card = document.createElement("div");
+                card.className = "course-card";
+                card.innerHTML = `
+                    <h3>${course.title}</h3>
+                    <p style="color:#666">${course.description}</p>
+                    <div class="card-actions">
+                        <button class="edit-btn" onclick="startEditing(${course.id})">Edit ✏️</button>
+                        <button class="delete-btn" onclick="deleteCourse(${course.id})">Delete 🗑️</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 2. Start Editing (Fills the form)
+        function startEditing(id) {
+            // Find the course data from our local list
+            const course = coursesData.find(c => c.id === id);
+            
+            // Fill the boxes
+            document.getElementById("editId").value = course.id;
+            document.getElementById("newTitle").value = course.title;
+            document.getElementById("newImage").value = course.imageUrl || "";
+            document.getElementById("newYoutubeId").value = course.youtubeId || "";
+            document.getElementById("newDesc").value = course.description;
+            document.getElementById("newContent").value = course.content || "";
+
+            // Change Button to "Update"
+            document.getElementById("saveBtn").innerText = "Update Content 💾";
+            document.getElementById("form-title").innerText = "Edit Content: " + course.title;
+            document.getElementById("cancelBtn").style.display = "block";
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 3. Save (Decides whether to ADD or UPDATE)
+        async function saveCourse() {
+            const id = document.getElementById("editId").value;
+            const data = { 
+                title: document.getElementById("newTitle").value, 
+                description: document.getElementById("newDesc").value,
+                content: document.getElementById("newContent").value,
+                imageUrl: document.getElementById("newImage").value,
+                youtubeId: document.getElementById("newYoutubeId").value
+            };
+
+            if(!data.title) return alert("Title is required!");
+
+            if (id) {
+                // UPDATE EXISTING (PUT)
+                await fetch(`${API_URL}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                // CREATE NEW (POST)
+                await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+            }
+
+            resetForm();
+            fetchCourses(); 
+        }
+
+        // 4. Reset Form
+        function resetForm() {
+            document.getElementById("editId").value = "";
+            document.getElementById("newTitle").value = "";
+            document.getElementById("newImage").value = "";
+            document.getElementById("newYoutubeId").value = "";
+            document.getElementById("newDesc").value = "";
+            document.getElementById("newContent").value = "";
+
+            document.getElementById("saveBtn").innerText = "+ Publish Content";
+            document.getElementById("form-title").innerText = "Add New Content";
+            document.getElementById("cancelBtn").style.display = "none";
+        }
+
+        // 5. Delete
+        async function deleteCourse(id) {
+            if(confirm("Are you sure?")) {
+                await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                fetchCourses();
+            }
+        }
+
+        fetchCourses();
+    </script>
+</body>
+</html>

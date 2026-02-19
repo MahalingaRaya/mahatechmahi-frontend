@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maha Tech Mahi - Learn & Grow</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #ffffff; 
+            padding: 0; margin: 0;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #2c3e50;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        nav h1 { margin: 0; font-size: 1.8em; }
+        nav p { margin: 5px 0 0 0; color: #bdc3c7; font-size: 0.9em; }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #007bff 0%, #00d2ff 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        /* Course Grid */
+        #course-container { 
+            display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; 
+            padding: 20px; max-width: 1200px; margin: 0 auto;
+        }
+        
+        .course-card { 
+            background: white; border-radius: 12px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+            width: 300px; overflow: hidden; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eee;
+        }
+        .course-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card-image { width: 100%; height: 180px; object-fit: cover; }
+        .card-content { padding: 20px; }
+        .course-title { color: #2c3e50; margin-top: 0; font-size: 1.3em; }
+        .course-desc { color: #666; font-size: 0.95em; line-height: 1.5; margin-bottom: 20px; }
+        
+        /* Buttons */
+        .watch-btn {
+            display: block; text-align: center; text-decoration: none;
+            background-color: #007bff; color: white; padding: 10px; border-radius: 6px;
+            font-size: 0.95em; font-weight: bold; margin-bottom: 8px;
+        }
+        .read-btn {
+            display: block; text-align: center; text-decoration: none;
+            background-color: #28a745; color: white; padding: 10px; border-radius: 6px;
+            font-size: 0.95em; font-weight: bold;
+        }
+        
+        .coming-soon { 
+            display: block; text-align: center; color: #999; 
+            font-size: 0.9em; padding: 10px; border: 1px dashed #ccc; border-radius: 6px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1>🚀 Maha Tech Mahi</h1>
+        <p>Empowering the Future of Tech</p>
+    </nav>
+
+    <div class="hero">
+        <h2>Welcome, Future Developer!</h2>
+        <p>Browse our premium courses and start learning today.</p>
+    </div>
+
+    <div id="course-container">
+        <p style="text-align:center; color:#888;">Loading courses...</p>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8081/api/courses";
+
+        async function fetchCourses() {
+            try {
+                const response = await fetch(API_URL);
+                const courses = await response.json();
+                const container = document.getElementById("course-container");
+                container.innerHTML = ""; 
+
+                courses.forEach(course => {
+                    const card = document.createElement("div");
+                    card.className = "course-card";
+                    
+                    const imageSrc = course.imageUrl ? course.imageUrl : "https://placehold.co/600x400?text=Course";
+
+                    // 1. Logic for Video Button (Blue)
+                    let videoButton = "";
+                    if (course.youtubeId) {
+                        videoButton = `<a href="https://www.youtube.com/watch?v=${course.youtubeId}" target="_blank" class="watch-btn">▶ Watch Video</a>`;
+                    } else {
+                        videoButton = `<div class="coming-soon">Video Coming Soon</div>`;
+                    }
+
+                    // 2. Logic for Blog Button (Green) - THIS WAS MISSING BEFORE!
+                    let blogButton = `<a href="blog.html?id=${course.id}" class="read-btn">📖 Read Tutorial</a>`;
+
+                    // 3. Put it all together
+                    card.innerHTML = `
+                        <img src="${imageSrc}" class="card-image">
+                        <div class="card-content">
+                            <h3 class="course-title">${course.title}</h3>
+                            <p class="course-desc">${course.description}</p>
+                            ${videoButton}
+                            ${blogButton}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchCourses();
+    </script>
+</body>
+</html>

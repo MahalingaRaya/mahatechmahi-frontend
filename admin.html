@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maha Tech Mahi Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 40px; }
+        .form-container { background: white; padding: 30px; border-radius: 15px; max-width: 800px; margin: 0 auto; border-left: 5px solid #007bff; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0 20px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .action-btn { padding: 12px; cursor: pointer; width: 100%; border: none; border-radius: 8px; color: white; font-weight: bold; }
+        .save-btn { background-color: #28a745; }
+        .cancel-btn { background-color: #6c757d; margin-top: 10px; display: none; }
+        #course-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 40px; }
+        .course-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; }
+        .badge { background: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align:center">🚀 Admin Dashboard</h1>
+    <button onclick="logout()" style="background: #dc3545; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; float: right; margin-right: 20px;">Logout 👋</button>
+
+    <div class="form-container">
+        <h3 id="form-title">Add New Content</h3>
+        <input type="hidden" id="editId">
+
+        <label>Title</label>
+        <input type="text" id="newTitle" placeholder="e.g. Java Variables">
+
+        <label>Category</label>
+        <select id="newCategory">
+            <option value="Java">☕ Java Programming</option>
+            <option value="Web">🌐 Web Development</option>
+            <option value="Database">🗄️ SQL & Data</option>
+            <option value="Other">💡 General Tech</option>
+        </select>
+
+        <label>Details</label>
+        <input type="text" id="newImage" placeholder="Image URL">
+        <input type="text" id="newYoutubeId" placeholder="YouTube Video ID">
+        <textarea id="newDesc" rows="2" placeholder="Short Summary"></textarea>
+        
+        <label><strong>Full Blog Content:</strong></label>
+        <textarea id="newContent" rows="8" placeholder="<p>Write content here...</p>"></textarea>
+        
+        <button id="saveBtn" class="action-btn save-btn" onclick="saveCourse()">+ Publish Content</button>
+        <button id="cancelBtn" class="action-btn cancel-btn" onclick="resetForm()">Cancel Edit</button>
+    </div>
+
+    <div id="course-container"></div>
+
+    <script>
+        // --- SECURITY LOCK ---
+        // If the VIP Pass is missing, kick them to login.html
+        if (sessionStorage.getItem("maha_admin_logged_in") !== "true") {
+            window.location.href = "login.html";
+        }
+        
+        // Function to logout (destroys the VIP Pass)
+        function logout() {
+            sessionStorage.removeItem("maha_admin_logged_in");
+            window.location.href = "login.html";
+        }
+        // ----------------------
+        const API_URL = "http://localhost:8081/api/courses";
+        let coursesData = [];
+
+        async function fetchCourses() {
+            const response = await fetch(API_URL);
+            coursesData = await response.json();
+            const container = document.getElementById("course-container");
+            container.innerHTML = ""; 
+
+            coursesData.forEach(course => {
+                const card = document.createElement("div");
+                card.className = "course-card";
+                const catBadge = course.category ? `<span class="badge">${course.category}</span>` : "";
+                
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        ${catBadge}
+                        <button onclick="startEditing(${course.id})">✏️</button>
+                    </div>
+                    <h3>${course.title}</h3>
+                    <p style="color:#666">${course.description}</p>
+                    <button style="background:red; color:white; border:none; padding:5px;" onclick="deleteCourse(${course.id})">Delete</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function startEditing(id) {
+            const course = coursesData.find(c => c.id === id);
+            document.getElementById("editId").value = course.id;
+            document.getElementById("newTitle").value = course.title;
+            document.getElementById("newCategory").value = course.category || "Java"; // Load Category
+            document.getElementById("newImage").value = course.imageUrl || "";
+            document.getElementById("newYoutubeId").value = course.youtubeId || "";
+            document.getElementById("newDesc").value = course.description;
+            document.getElementById("newContent").value = course.content || "";
+
+            document.getElementById("saveBtn").innerText = "Update Content 💾";
+            document.getElementById("form-title").innerText = "Edit: " + course.title;
+            document.getElementById("cancelBtn").style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function saveCourse() {
+            const id = document.getElementById("editId").value;
+            const data = { 
+                title: document.getElementById("newTitle").value, 
+                category: document.getElementById("newCategory").value, // Save Category
+                description: document.getElementById("newDesc").value,
+                content: document.getElementById("newContent").value,
+                imageUrl: document.getElementById("newImage").value,
+                youtubeId: document.getElementById("newYoutubeId").value
+            };
+
+            if(!data.title) return alert("Title is required!");
+
+            const method = id ? "PUT" : "POST";
+            const url = id ? `${API_URL}/${id}` : API_URL;
+
+            await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            resetForm();
+            fetchCourses(); 
+        }
+
+        function resetForm() {
+            document.getElementById("editId").value = "";
+            document.getElementById("newTitle").value = "";
+            document.getElementById("newCategory").value = "Java";
+            document.getElementById("newImage").value = "";
+            document.getElementById("newYoutubeId").value = "";
+            document.getElementById("newDesc").value = "";
+            document.getElementById("newContent").value = "";
+            document.getElementById("saveBtn").innerText = "+ Publish Content";
+            document.getElementById("form-title").innerText = "Add New Content";
+            document.getElementById("cancelBtn").style.display = "none";
+        }
+
+        async function deleteCourse(id) {
+            if(confirm("Are you sure?")) {
+                await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                fetchCourses();
+            }
+        }
+
+        fetchCourses();
+    </script>
+</body>
+</html>

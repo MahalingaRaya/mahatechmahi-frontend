@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maha Tech Mahi Courses</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            padding: 40px; 
+            margin: 0;
+        }
+        h1 { 
+            color: #2c3e50; 
+            text-align: center; 
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+        #course-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 25px; 
+            justify-content: center; 
+        }
+        .course-card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1); 
+            width: 320px;
+            border-top: 5px solid #007bff;
+        }
+        .course-title { 
+            color: #007bff; 
+            font-size: 1.4em; 
+            margin-top: 0;
+            margin-bottom: 15px; 
+        }
+        .course-desc { 
+            color: #555; 
+            line-height: 1.6; 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Maha Tech Mahi! 🚀</h1>
+    
+    <div id="course-container">
+        <p style="text-align: center; color: #888;">Loading courses from the database...</p>
+    </div>
+
+   <script>
+        // The exact address of your Spring Boot API!
+        const API_URL = "http://localhost:8081/api/courses";
+
+        async function fetchCourses() {
+            try {
+                // 1. Ask the backend for the data
+                const response = await fetch(API_URL);
+                const courses = await response.json();
+
+                // 2. Find the empty box on our webpage
+                const container = document.getElementById("course-container");
+                container.innerHTML = ""; // Clear the "Loading..." text
+
+                // 3. Loop through every course in your Aiven database
+                courses.forEach(course => {
+                    // Create a beautiful visual card for each course
+                    const card = document.createElement("div");
+                    card.className = "course-card";
+                    
+                    card.innerHTML = `
+                        <h2 class="course-title">${course.title}</h2>
+                        <p class="course-desc">${course.description}</p>
+                    `;
+                    
+                    // Put the newly created card onto the screen
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+                document.getElementById("course-container").innerHTML = 
+                    "<p style='color:red;'>Could not connect to the database. Is Eclipse running?</p>";
+            }
+        }
+
+        // Run this magic function as soon as the page loads!
+        fetchCourses();
+    </script>
+
+</body>
+</html>
