@@ -19,7 +19,7 @@
         /* Main Container */
         #main-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-        /* NEW: Category Headers */
+        /* Category Headers */
         .category-section { margin-bottom: 50px; }
         .category-title { 
             font-size: 1.8em; color: #2c3e50; border-bottom: 3px solid #007bff; 
@@ -55,7 +55,7 @@
         <h2>Learn. Build. Grow.</h2>
         <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search courses..." onkeyup="filterCourses()">
     </div>
-
+    <div id="course-container"></div>
     <div id="main-container">
         <p style="text-align:center; color:#888;">Loading your curriculum...</p>
     </div>
@@ -64,6 +64,7 @@
         const API_URL = "http://localhost:8081/api/courses";
         let allCourses = []; 
 
+        // 1. THIS IS YOUR ADVANCED LISTENER
         async function fetchCourses() {
             try {
                 const response = await fetch(API_URL);
@@ -83,10 +84,9 @@
                 return;
             }
 
-            // 1. GROUP COURSES BY CATEGORY
+            // Group courses by category
             const groupedCourses = {};
             courses.forEach(course => {
-                // If it has no category, put it in "Other"
                 const cat = course.category || "💡 Other Topics"; 
                 if (!groupedCourses[cat]) {
                     groupedCourses[cat] = [];
@@ -94,24 +94,19 @@
                 groupedCourses[cat].push(course);
             });
 
-            // 2. DRAW EACH CATEGORY SECTION
+            // Draw each category
             for (const category in groupedCourses) {
-                
-                // Create the wrapper for this section
                 const sectionDiv = document.createElement("div");
                 sectionDiv.className = "category-section";
 
-                // Create the Big Title (e.g. "☕ Java Programming")
                 const titleElement = document.createElement("h2");
                 titleElement.className = "category-title";
                 titleElement.innerText = category;
                 sectionDiv.appendChild(titleElement);
 
-                // Create the Grid for the cards in this category
                 const gridDiv = document.createElement("div");
                 gridDiv.className = "course-grid";
 
-                // Add the cards to this grid
                 groupedCourses[category].forEach(course => {
                     const card = document.createElement("div");
                     card.className = "course-card";
@@ -136,22 +131,25 @@
                     gridDiv.appendChild(card);
                 });
 
-                // Attach the grid to the section, and the section to the page
                 sectionDiv.appendChild(gridDiv);
                 container.appendChild(sectionDiv);
             }
         }
 
+       
+
+        // 2. THIS IS THE MISSING PIECE! We have to actually call the listener to start it!
+
+        fetchCourses();
         function filterCourses() {
             const searchText = document.getElementById("searchInput").value.toLowerCase();
             const filteredList = allCourses.filter(course => 
-                course.title.toLowerCase().includes(searchText) || 
-                course.description.toLowerCase().includes(searchText)
+                (course.title || "").toLowerCase().includes(searchText) || 
+                (course.description || "").toLowerCase().includes(searchText)
             );
             displayCourses(filteredList);
         }
 
-        fetchCourses();
     </script>
 </body>
 </html>
