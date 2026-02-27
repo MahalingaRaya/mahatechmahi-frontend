@@ -3,76 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maha Tech Mahi Blogs</title>
+    <title>Maha Tech Mahi - Mini-Project Tutorial</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; }
+        /* Shared Modern CSS */
+        :root {
+            --primary-blue: #007bff;
+            --dark-bg: #1e1e24;
+            --text-main: #333333;
+            --bg-color: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background-color: var(--primary-blue);
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
         
-        /* W3Schools Style Sidebar */
-        .sidebar { width: 250px; background: #f1f1f1; height: 100vh; padding: 20px; overflow-y: auto; position: fixed; }
-        .sidebar a { display: block; padding: 10px; color: black; text-decoration: none; margin-bottom: 5px; }
-        .sidebar a:hover { background-color: #ddd; }
+        .navbar a:hover { background-color: #0056b3; }
+
+        /* Tutorial Container */
+        .tutorial-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        /* Header & Badges */
+        .project-header { text-align: center; margin-bottom: 30px; }
+        .project-title { font-size: 2.5em; color: var(--primary-blue); margin: 0 0 15px 0; }
+        .project-hook { font-size: 1.2em; color: #555; margin-bottom: 20px; }
         
-        /* Main Reading Area */
-        .content { margin-left: 270px; padding: 40px; max-width: 800px; }
-        .blog-title { font-size: 2.5em; color: #2c3e50; }
-        .blog-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
-        .blog-text { font-size: 1.2em; line-height: 1.8; color: #333; }
-        
-        /* Code Block Style */
-        pre { background: #282c34; color: white; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge.category { background-color: #e9ecef; color: #495057; }
+        .badge.tech { background-color: #d1ecf1; color: #0c5460; }
+        .badge.difficulty { background-color: #fff3cd; color: #856404; }
+
+        /* Media (YouTube or Image) */
+        .media-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            background-color: #000;
+        }
+
+        .media-container iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+        }
+
+        .media-container img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Content Area */
+        .tutorial-content {
+            font-size: 1.1em;
+            color: #444;
+            white-space: pre-wrap; /* Keeps your paragraphs and line breaks neat */
+            margin-bottom: 40px;
+        }
+
+        /* GitHub Button */
+        .action-section { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }
+        .github-btn {
+            display: inline-block;
+            background-color: #24292e;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .github-btn:hover { background-color: #000; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .tutorial-container { margin: 20px; padding: 20px; }
+            .project-title { font-size: 2em; }
+            .media-container iframe { height: 250px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar" id="sidebar-list">
-        <h3>Tutorials</h3>
-        </div>
+    <div class="navbar">
+        <h2>🚀 Maha Tech Mahi</h2>
+        <a href="index.html">← Back to Projects</a>
+    </div>
 
-    <div class="content">
-        <img id="blog-image" class="blog-image" style="display:none;">
-        <h1 id="blog-title" class="blog-title">Select a Topic...</h1>
-        <div id="blog-content" class="blog-text"></div>
+    <div class="tutorial-container" id="tutorial-container">
+        <h2 style="text-align: center;">Loading Project...</h2>
     </div>
 
     <script>
-        const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
+        // 1. Get the project ID from the web address (e.g., ?id=5)
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
 
-        async function loadPage() {
-            // 1. Fetch all courses for the Sidebar
-            const response = await fetch(API_URL);
-            const courses = await response.json();
-            
-            const sidebar = document.getElementById("sidebar-list");
-            
-            courses.forEach(course => {
-                const link = document.createElement("a");
-                link.innerText = course.title;
-                link.href = `?id=${course.id}`; // Reload page with ID
-                sidebar.appendChild(link);
-            });
+        // 2. Point to your live backend
+        const API_URL = `https://mahatechmahi-backend.onrender.com/api/courses/${projectId}`;
 
-            // 2. Check if user clicked a topic (URL has ?id=5)
-            const urlParams = new URLSearchParams(window.location.search);
-            const courseId = urlParams.get('id');
+        async function loadProject() {
+            const container = document.getElementById("tutorial-container");
 
-            if (courseId) {
-                // Find the specific course from the list
-                const selectedCourse = courses.find(c => c.id == courseId);
-                if (selectedCourse) {
-                    document.getElementById("blog-title").innerText = selectedCourse.title;
-                    
-                    if(selectedCourse.imageUrl) {
-                        document.getElementById("blog-image").src = selectedCourse.imageUrl;
-                        document.getElementById("blog-image").style.display = "block";
-                    }
-                    
-                    // Inject the HTML content
-                    document.getElementById("blog-content").innerHTML = selectedCourse.content || "<p>No content written yet.</p>";
-                }
+            if (!projectId) {
+                container.innerHTML = "<h2 style='text-align:center; color:red;'>Oops! No project selected. Go back to the homepage.</h2>";
+                return;
+            }
+
+            try {
+                // Fetch only this specific project from Aiven via Spring Boot
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Project not found");
+                
+                const project = await response.json();
+                renderProject(project, container);
+            } catch (error) {
+                container.innerHTML = "<h2 style='text-align:center; color:red;'>Failed to load the project. The backend might be waking up!</h2>";
+                console.error(error);
             }
         }
 
-        loadPage();
+        function renderProject(project, container) {
+            // Decide whether to show a YouTube video or an Image
+            let mediaHTML = "";
+            if (project.youtubeId && project.youtubeId.trim() !== "") {
+                mediaHTML = `
+                    <div class="media-container">
+                        <iframe src="https://www.youtube.com/embed/${project.youtubeId}" allowfullscreen></iframe>
+                    </div>`;
+            } else {
+                const imgSrc = project.imageUrl || `https://via.placeholder.com/900x450/007bff/ffffff?text=${encodeURIComponent(project.title || 'Maha Tech Mahi')}`;
+                mediaHTML = `
+                    <div class="media-container">
+                        <img src="${imgSrc}" alt="${project.title}">
+                    </div>`;
+            }
+
+            // Decide whether to show the GitHub button
+            let githubHTML = "";
+            if (project.sourceCodeUrl && project.sourceCodeUrl.trim() !== "") {
+                githubHTML = `
+                    <div class="action-section">
+                        <a href="${project.sourceCodeUrl}" target="_blank" class="github-btn">
+                            💻 View Source Code on GitHub
+                        </a>
+                    </div>`;
+            }
+
+            // Inject everything into the page
+            container.innerHTML = `
+                <div class="project-header">
+                    <div class="badges">
+                        <span class="badge category">${project.category || 'General'}</span>
+                        <span class="badge tech">${project.techStack || 'Code'}</span>
+                        <span class="badge difficulty">${project.difficulty || 'All Levels'}</span>
+                    </div>
+                    <h1 class="project-title">${project.title || 'Untitled Project'}</h1>
+                    <p class="project-hook">${project.description || 'Dive into this exciting new tutorial!'}</p>
+                </div>
+
+                ${mediaHTML}
+
+                <div class="tutorial-content">${project.blogContent || 'No detailed tutorial content available yet. Check back soon!'}</div>
+
+                ${githubHTML}
+            `;
+        }
+
+        // Run the function as soon as the page opens
+        window.onload = loadProject;
     </script>
 </body>
 </html>

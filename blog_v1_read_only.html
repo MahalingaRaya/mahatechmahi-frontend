@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maha Tech Mahi Blogs</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; }
+        
+        /* W3Schools Style Sidebar */
+        .sidebar { width: 250px; background: #f1f1f1; height: 100vh; padding: 20px; overflow-y: auto; position: fixed; }
+        .sidebar a { display: block; padding: 10px; color: black; text-decoration: none; margin-bottom: 5px; }
+        .sidebar a:hover { background-color: #ddd; }
+        
+        /* Main Reading Area */
+        .content { margin-left: 270px; padding: 40px; max-width: 800px; }
+        .blog-title { font-size: 2.5em; color: #2c3e50; }
+        .blog-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
+        .blog-text { font-size: 1.2em; line-height: 1.8; color: #333; }
+        
+        /* Code Block Style */
+        pre { background: #282c34; color: white; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar-list">
+        <h3>Tutorials</h3>
+        </div>
+
+    <div class="content">
+        <img id="blog-image" class="blog-image" style="display:none;">
+        <h1 id="blog-title" class="blog-title">Select a Topic...</h1>
+        <div id="blog-content" class="blog-text"></div>
+    </div>
+
+    <script>
+        const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
+
+        async function loadPage() {
+            // 1. Fetch all courses for the Sidebar
+            const response = await fetch(API_URL);
+            const courses = await response.json();
+            
+            const sidebar = document.getElementById("sidebar-list");
+            
+            courses.forEach(course => {
+                const link = document.createElement("a");
+                link.innerText = course.title;
+                link.href = `?id=${course.id}`; // Reload page with ID
+                sidebar.appendChild(link);
+            });
+
+            // 2. Check if user clicked a topic (URL has ?id=5)
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('id');
+
+            if (courseId) {
+                // Find the specific course from the list
+                const selectedCourse = courses.find(c => c.id == courseId);
+                if (selectedCourse) {
+                    document.getElementById("blog-title").innerText = selectedCourse.title;
+                    
+                    if(selectedCourse.imageUrl) {
+                        document.getElementById("blog-image").src = selectedCourse.imageUrl;
+                        document.getElementById("blog-image").style.display = "block";
+                    }
+                    
+                    // Inject the HTML content
+                    document.getElementById("blog-content").innerHTML = selectedCourse.content || "<p>No content written yet.</p>";
+                }
+            }
+        }
+
+        loadPage();
+    </script>
+</body>
+</html>
