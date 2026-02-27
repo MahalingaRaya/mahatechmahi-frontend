@@ -3,156 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maha Tech Mahi Admin</title>
+    <title>Maha Tech Mahi - Admin Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 40px; }
-        .form-container { background: white; padding: 30px; border-radius: 15px; max-width: 800px; margin: 0 auto; border-left: 5px solid #007bff; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0 20px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .action-btn { padding: 12px; cursor: pointer; width: 100%; border: none; border-radius: 8px; color: white; font-weight: bold; }
-        .save-btn { background-color: #28a745; }
-        .cancel-btn { background-color: #6c757d; margin-top: 10px; display: none; }
-        #course-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 40px; }
-        .course-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 300px; }
-        .badge { background: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; text-transform: uppercase; }
+        /* Modern, Clean CSS for Maha Tech Mahi Admin */
+        :root {
+            --primary-blue: #007bff;
+            --dark-bg: #1e1e24;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            background-color: var(--dark-bg);
+            color: white;
+            width: 100%;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover { background-color: #c82333; }
+
+        .dashboard-container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 30px;
+            gap: 30px;
+        }
+
+        /* Form Styling */
+        .admin-form-container {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            flex: 1;
+        }
+
+        .admin-form-container h2 { margin-top: 0; color: var(--primary-blue); }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        button.save-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button.save-btn:hover { background-color: #0056b3; }
+
+        /* Course List Styling */
+        .course-list-container {
+            flex: 1;
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .course-card {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+
+        .course-card h3 { margin: 0 0 10px 0; color: var(--primary-blue); }
+        .course-card p { margin: 5px 0; font-size: 14px; }
+        .badge {
+            background-color: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .action-buttons { margin-top: 10px; }
+        .edit-btn { background-color: #ffc107; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-weight: bold; }
+        .delete-btn { background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-left: 10px; }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align:center">🚀 Admin Dashboard</h1>
-    <button onclick="logout()" style="background: #dc3545; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; float: right; margin-right: 20px;">Logout 👋</button>
-
-    <div class="form-container">
-        <h3 id="form-title">Add New Content</h3>
-        <input type="hidden" id="editId">
-
-        <label>Title</label>
-        <input type="text" id="newTitle" placeholder="e.g. Java Variables">
-
-        <label>Category</label>
-        <select id="newCategory">
-            <option value="Java">☕ Java Programming</option>
-            <option value="Web">🌐 Web Development</option>
-            <option value="Database">🗄️ SQL & Data</option>
-            <option value="Other">💡 General Tech</option>
-        </select>
-
-        <label>Details</label>
-        <input type="text" id="newImage" placeholder="Image URL">
-        <input type="text" id="newYoutubeId" placeholder="YouTube Video ID">
-        <textarea id="newDesc" rows="2" placeholder="Short Summary"></textarea>
-        
-        <label><strong>Full Blog Content:</strong></label>
-        <textarea id="newContent" rows="8" placeholder="<p>Write content here...</p>"></textarea>
-        
-        <button id="saveBtn" class="action-btn save-btn" onclick="saveCourse()">+ Publish Content</button>
-        <button id="cancelBtn" class="action-btn cancel-btn" onclick="resetForm()">Cancel Edit</button>
+    <div class="navbar">
+        <h1>🚀 Maha Tech Mahi - Admin</h1>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
 
-    <div id="course-container"></div>
+    <div class="dashboard-container">
+        
+        <div class="admin-form-container">
+            <h2 id="formTitle">Add New Mini-Project</h2>
+            <form id="courseForm">
+                <input type="hidden" id="courseId">
+
+                <label>Project Title:</label>
+                <input type="text" id="title" required placeholder="e.g., Build a Responsive Navbar">
+
+                <label>The Hook (Short Description):</label>
+                <input type="text" id="description" required placeholder="What will they learn?">
+
+                <label>Category:</label>
+                <select id="category">
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Fullstack">Fullstack</option>
+                    <option value="Java Core">Java Core</option>
+                </select>
+
+                <label>Tech Stack:</label>
+                <input type="text" id="techStack" placeholder="e.g., HTML, CSS, JavaScript">
+
+                <label>Difficulty:</label>
+                <select id="difficulty">
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+
+                <label>YouTube Video ID:</label>
+                <input type="text" id="youtubeId" placeholder="e.g., dQw4w9WgXcQ">
+
+                <label>Thumbnail Image URL:</label>
+                <input type="text" id="imageUrl" placeholder="Link to the cover image">
+
+                <label>Source Code (GitHub) URL:</label>
+                <input type="text" id="sourceCodeUrl" placeholder="Link to your reference code">
+
+                <label>Detailed Tutorial (Blog Content):</label>
+                <textarea id="blogContent" rows="6" placeholder="Write your step-by-step code guide here..."></textarea>
+
+                <button type="button" class="save-btn" onclick="saveCourse()">Save Project</button>
+                <button type="button" onclick="clearForm()" style="margin-top:10px; width:100%; padding:8px; cursor:pointer;">Clear Form</button>
+            </form>
+        </div>
+
+        <div class="course-list-container">
+            <h2>Current Projects</h2>
+            <div id="course-container">
+                <p>Loading projects...</p>
+            </div>
+        </div>
+
+    </div>
 
     <script>
-        // --- SECURITY LOCK ---
-        // If the VIP Pass is missing, kick them to login.html
-        if (sessionStorage.getItem("maha_admin_logged_in") !== "true") {
+        // --- 1. Security Check ---
+        // Uncomment this if you want to strictly enforce the login page!
+        /*
+        if (!sessionStorage.getItem("maha_admin_logged_in")) {
             window.location.href = "login.html";
         }
-        
-        // Function to logout (destroys the VIP Pass)
-        function logout() {
-            sessionStorage.removeItem("maha_admin_logged_in");
-            window.location.href = "login.html";
-        }
-        // ----------------------
-        const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
-        let coursesData = [];
+        */
 
+        // --- 2. API Configuration ---
+        const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
+        let coursesData = []; // Store the data globally so we can edit it easily
+
+        // --- 3. Fetch and Display Courses ---
         async function fetchCourses() {
-            const response = await fetch(API_URL);
-            coursesData = await response.json();
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Backend might be asleep.");
+                coursesData = await response.json();
+                displayCourses();
+            } catch (error) {
+                document.getElementById("course-container").innerHTML = `<p style="color:red;">Error loading projects. Is the backend awake?</p>`;
+                console.error(error);
+            }
+        }
+
+        function displayCourses() {
             const container = document.getElementById("course-container");
-            container.innerHTML = ""; 
+            container.innerHTML = ""; // Clear existing
+
+            if (coursesData.length === 0) {
+                container.innerHTML = "<p>No projects found. Start adding some!</p>";
+                return;
+            }
 
             coursesData.forEach(course => {
                 const card = document.createElement("div");
                 card.className = "course-card";
-                const catBadge = course.category ? `<span class="badge">${course.category}</span>` : "";
-                
                 card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between;">
-                        ${catBadge}
-                        <button onclick="startEditing(${course.id})">✏️</button>
+                    <h3>${course.title || "Untitled Project"}</h3>
+                    <p><strong>Hook:</strong> ${course.description || "N/A"}</p>
+                    <p>
+                        <span class="badge">${course.category || "N/A"}</span>
+                        <span class="badge">${course.techStack || "N/A"}</span>
+                        <span class="badge">${course.difficulty || "N/A"}</span>
+                    </p>
+                    <div class="action-buttons">
+                        <button class="edit-btn" onclick="startEditing(${course.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteCourse(${course.id})">Delete</button>
                     </div>
-                    <h3>${course.title}</h3>
-                    <p style="color:#666">${course.description}</p>
-                    <button style="background:red; color:white; border:none; padding:5px;" onclick="deleteCourse(${course.id})">Delete</button>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function startEditing(id) {
-            const course = coursesData.find(c => c.id === id);
-            document.getElementById("editId").value = course.id;
-            document.getElementById("newTitle").value = course.title;
-            document.getElementById("newCategory").value = course.category || "Java"; // Load Category
-            document.getElementById("newImage").value = course.imageUrl || "";
-            document.getElementById("newYoutubeId").value = course.youtubeId || "";
-            document.getElementById("newDesc").value = course.description;
-            document.getElementById("newContent").value = course.content || "";
-
-            document.getElementById("saveBtn").innerText = "Update Content 💾";
-            document.getElementById("form-title").innerText = "Edit: " + course.title;
-            document.getElementById("cancelBtn").style.display = "block";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
+        // --- 4. Save (Create or Update) ---
         async function saveCourse() {
-            const id = document.getElementById("editId").value;
-            const data = { 
-                title: document.getElementById("newTitle").value, 
-                category: document.getElementById("newCategory").value, // Save Category
-                description: document.getElementById("newDesc").value,
-                content: document.getElementById("newContent").value,
-                imageUrl: document.getElementById("newImage").value,
-                youtubeId: document.getElementById("newYoutubeId").value
+            const courseId = document.getElementById("courseId").value;
+            
+            // Build the data object matching your Spring Boot model
+            const coursePayload = {
+                title: document.getElementById("title").value,
+                description: document.getElementById("description").value,
+                category: document.getElementById("category").value,
+                techStack: document.getElementById("techStack").value,
+                difficulty: document.getElementById("difficulty").value,
+                youtubeId: document.getElementById("youtubeId").value,
+                imageUrl: document.getElementById("imageUrl").value,
+                sourceCodeUrl: document.getElementById("sourceCodeUrl").value,
+                blogContent: document.getElementById("blogContent").value
             };
 
-            if(!data.title) return alert("Title is required!");
+            const method = courseId ? "PUT" : "POST";
+            const url = courseId ? `${API_URL}/${courseId}` : API_URL;
 
-            const method = id ? "PUT" : "POST";
-            const url = id ? `${API_URL}/${id}` : API_URL;
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(coursePayload)
+                });
 
-            await fetch(url, {
-                method: method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            resetForm();
-            fetchCourses(); 
-        }
-
-        function resetForm() {
-            document.getElementById("editId").value = "";
-            document.getElementById("newTitle").value = "";
-            document.getElementById("newCategory").value = "Java";
-            document.getElementById("newImage").value = "";
-            document.getElementById("newYoutubeId").value = "";
-            document.getElementById("newDesc").value = "";
-            document.getElementById("newContent").value = "";
-            document.getElementById("saveBtn").innerText = "+ Publish Content";
-            document.getElementById("form-title").innerText = "Add New Content";
-            document.getElementById("cancelBtn").style.display = "none";
-        }
-
-        async function deleteCourse(id) {
-            if(confirm("Are you sure?")) {
-                await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-                fetchCourses();
+                if (response.ok) {
+                    alert(courseId ? "Project updated!" : "New project added!");
+                    clearForm();
+                    fetchCourses(); // Refresh the right side
+                } else {
+                    alert("Failed to save. Check the console.");
+                }
+            } catch (error) {
+                console.error("Error saving:", error);
             }
         }
 
-        fetchCourses();
+        // --- 5. Edit ---
+        function startEditing(id) {
+            // Find the course in our local array
+            const course = coursesData.find(c => c.id === id);
+            if (!course) return;
+
+            document.getElementById("formTitle").innerText = "Edit Project";
+            
+            // Populate the form fields
+            document.getElementById("courseId").value = course.id;
+            document.getElementById("title").value = course.title || "";
+            document.getElementById("description").value = course.description || "";
+            document.getElementById("category").value = course.category || "Frontend";
+            document.getElementById("techStack").value = course.techStack || "";
+            document.getElementById("difficulty").value = course.difficulty || "Beginner";
+            document.getElementById("youtubeId").value = course.youtubeId || "";
+            document.getElementById("imageUrl").value = course.imageUrl || "";
+            document.getElementById("sourceCodeUrl").value = course.sourceCodeUrl || "";
+            document.getElementById("blogContent").value = course.blogContent || "";
+            
+            // Scroll to top of form
+            window.scrollTo(0, 0);
+        }
+
+        // --- 6. Delete ---
+        async function deleteCourse(id) {
+            if (!confirm("Are you sure you want to delete this project? This cannot be undone!")) return;
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                if (response.ok) {
+                    fetchCourses(); // Refresh the list
+                } else {
+                    alert("Failed to delete.");
+                }
+            } catch (error) {
+                console.error("Error deleting:", error);
+            }
+        }
+
+        // --- 7. Utilities ---
+        function clearForm() {
+            document.getElementById("formTitle").innerText = "Add New Mini-Project";
+            document.getElementById("courseForm").reset();
+            document.getElementById("courseId").value = "";
+        }
+
+        function logout() {
+            sessionStorage.removeItem("maha_admin_logged_in");
+            window.location.href = "login.html";
+        }
+
+        // Load data immediately when the page opens
+        window.onload = fetchCourses;
     </script>
 </body>
 </html>
