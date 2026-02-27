@@ -36,7 +36,10 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .navbar h1 { margin: 0; font-size: 24px; }
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
 
         .logout-btn {
             background-color: #dc3545;
@@ -131,15 +134,12 @@
             font-size: 12px;
             font-weight: bold;
             color: #495057;
-            display: inline-block;
-            margin-bottom: 5px;
         }
-        
-        .badge-type { background-color: var(--primary-blue); color: white; }
 
         .action-buttons { margin-top: 10px; }
         .edit-btn { background-color: #ffc107; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-weight: bold; }
         .delete-btn { background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-left: 10px; }
+    
 
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
@@ -151,6 +151,8 @@
                 width: 100%;
             }
         }
+    
+    
     </style>
 </head>
 <body>
@@ -163,17 +165,11 @@
     <div class="dashboard-container">
         
         <div class="admin-form-container">
-            <h2 id="formTitle">Add New Content</h2>
+            <h2 id="formTitle">Add New Mini-Project</h2>
             <form id="courseForm">
                 <input type="hidden" id="courseId">
 
-                <label>Content Type:</label>
-                <select id="type" style="border: 2px solid var(--primary-blue); font-weight: bold;">
-                    <option value="Project">🛠️ Mini-Project</option>
-                    <option value="Tutorial">📚 Tutorial</option>
-                </select>
-
-                <label>Title:</label>
+                <label>Project Title:</label>
                 <input type="text" id="title" required placeholder="e.g., Build a Responsive Navbar">
 
                 <label>The Hook (Short Description):</label>
@@ -209,24 +205,34 @@
                 <label>Detailed Tutorial (Blog Content):</label>
                 <textarea id="blogContent" rows="6" placeholder="Write your step-by-step code guide here..."></textarea>
 
-                <button type="button" class="save-btn" onclick="saveCourse()">Save Content</button>
+                <button type="button" class="save-btn" onclick="saveCourse()">Save Project</button>
                 <button type="button" onclick="clearForm()" style="margin-top:10px; width:100%; padding:8px; cursor:pointer;">Clear Form</button>
             </form>
         </div>
 
         <div class="course-list-container">
-            <h2>Current Content</h2>
+            <h2>Current Projects</h2>
             <div id="course-container">
-                <p>Loading content...</p>
+                <p>Loading projects...</p>
             </div>
         </div>
 
     </div>
 
     <script>
-        const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
-        let coursesData = [];
+        // --- 1. Security Check ---
+        // Uncomment this if you want to strictly enforce the login page!
+        /*
+        if (!sessionStorage.getItem("maha_admin_logged_in")) {
+            window.location.href = "login.html";
+        }
+        */
 
+        // --- 2. API Configuration ---
+        const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
+        let coursesData = []; // Store the data globally so we can edit it easily
+
+        // --- 3. Fetch and Display Courses ---
         async function fetchCourses() {
             try {
                 const response = await fetch(API_URL);
@@ -234,17 +240,17 @@
                 coursesData = await response.json();
                 displayCourses();
             } catch (error) {
-                document.getElementById("course-container").innerHTML = `<p style="color:red;">Error loading content. Is the backend awake?</p>`;
+                document.getElementById("course-container").innerHTML = `<p style="color:red;">Error loading projects. Is the backend awake?</p>`;
                 console.error(error);
             }
         }
 
         function displayCourses() {
             const container = document.getElementById("course-container");
-            container.innerHTML = "";
+            container.innerHTML = ""; // Clear existing
 
             if (coursesData.length === 0) {
-                container.innerHTML = "<p>No content found. Start adding some!</p>";
+                container.innerHTML = "<p>No projects found. Start adding some!</p>";
                 return;
             }
 
@@ -252,10 +258,7 @@
                 const card = document.createElement("div");
                 card.className = "course-card";
                 card.innerHTML = `
-                    <h3>${course.title || "Untitled Content"}</h3>
-                    <p>
-                        <span class="badge badge-type">${course.type === 'Tutorial' ? '📚 Tutorial' : '🛠️ Project'}</span>
-                    </p>
+                    <h3>${course.title || "Untitled Project"}</h3>
                     <p><strong>Hook:</strong> ${course.description || "N/A"}</p>
                     <p>
                         <span class="badge">${course.category || "N/A"}</span>
@@ -271,13 +274,14 @@
             });
         }
 
+        // --- 4. Save (Create or Update) ---
         async function saveCourse() {
             const courseId = document.getElementById("courseId").value;
             
+            // Build the data object matching your Spring Boot model
             const coursePayload = {
                 title: document.getElementById("title").value,
                 description: document.getElementById("description").value,
-                type: document.getElementById("type").value, // Grab the new Type
                 category: document.getElementById("category").value,
                 techStack: document.getElementById("techStack").value,
                 difficulty: document.getElementById("difficulty").value,
@@ -298,9 +302,9 @@
                 });
 
                 if (response.ok) {
-                    alert(courseId ? "Content updated!" : "New content added!");
+                    alert(courseId ? "Project updated!" : "New project added!");
                     clearForm();
-                    fetchCourses(); 
+                    fetchCourses(); // Refresh the right side
                 } else {
                     alert("Failed to save. Check the console.");
                 }
@@ -309,14 +313,16 @@
             }
         }
 
+        // --- 5. Edit ---
         function startEditing(id) {
+            // Find the course in our local array
             const course = coursesData.find(c => c.id === id);
             if (!course) return;
 
-            document.getElementById("formTitle").innerText = "Edit Content";
+            document.getElementById("formTitle").innerText = "Edit Project";
             
+            // Populate the form fields
             document.getElementById("courseId").value = course.id;
-            document.getElementById("type").value = course.type || "Project"; // Set the dropdown
             document.getElementById("title").value = course.title || "";
             document.getElementById("description").value = course.description || "";
             document.getElementById("category").value = course.category || "Frontend";
@@ -327,16 +333,18 @@
             document.getElementById("sourceCodeUrl").value = course.sourceCodeUrl || "";
             document.getElementById("blogContent").value = course.blogContent || "";
             
+            // Scroll to top of form
             window.scrollTo(0, 0);
         }
 
+        // --- 6. Delete ---
         async function deleteCourse(id) {
-            if (!confirm("Are you sure you want to delete this content? This cannot be undone!")) return;
+            if (!confirm("Are you sure you want to delete this project? This cannot be undone!")) return;
 
             try {
                 const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
                 if (response.ok) {
-                    fetchCourses();
+                    fetchCourses(); // Refresh the list
                 } else {
                     alert("Failed to delete.");
                 }
@@ -345,11 +353,11 @@
             }
         }
 
+        // --- 7. Utilities ---
         function clearForm() {
-            document.getElementById("formTitle").innerText = "Add New Content";
+            document.getElementById("formTitle").innerText = "Add New Mini-Project";
             document.getElementById("courseForm").reset();
             document.getElementById("courseId").value = "";
-            document.getElementById("type").value = "Project"; // Reset default
         }
 
         function logout() {
@@ -357,6 +365,7 @@
             window.location.href = "login.html";
         }
 
+        // Load data immediately when the page opens
         window.onload = fetchCourses;
     </script>
 </body>

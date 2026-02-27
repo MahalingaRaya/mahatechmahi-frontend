@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maha Tech Mahi - Learn. Build. Grow.</title>
+    <title>Maha Tech Mahi - Project-Based Learning</title>
     <style>
-        /* Modern CSS for the Student Homepage */
+        /* Shared Modern CSS */
         :root {
             --primary-blue: #007bff;
             --dark-bg: #1e1e24;
@@ -21,106 +21,121 @@
             color: var(--text-main);
         }
 
-        /* Navigation & Hero Section */
+        /* Navigation */
         .navbar {
             background-color: var(--dark-bg);
             color: white;
             padding: 15px 30px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
         }
 
+        .navbar h2 { margin: 0; font-size: 22px; }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .nav-links a:hover { color: var(--primary-blue); }
+
+        /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            background-color: var(--primary-blue);
             color: white;
             text-align: center;
             padding: 60px 20px;
         }
 
         .hero h1 { font-size: 3em; margin: 0; }
-        .hero p { font-size: 1.2em; margin-top: 10px; }
+        .hero p { font-size: 1.2em; margin-top: 10px; opacity: 0.9; }
 
-        .container {
+        /* Section Headers */
+        .section-header {
             max-width: 1200px;
-            margin: 40px auto;
+            margin: 50px auto 20px auto;
+            padding: 0 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .section-header h2 {
+            font-size: 2em;
+            color: var(--dark-bg);
+            margin: 0;
+        }
+
+        .section-header p {
+            color: #666;
+            margin: 5px 0 0 0;
+            font-size: 1.1em;
+        }
+
+        /* Project & Tutorial Grids */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
             padding: 0 20px;
         }
 
-        .section-title { color: var(--dark-bg); margin-bottom: 30px; font-size: 2em;}
-
-        /* Responsive Grid for Project Cards */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        /* Project Card Styling */
         .project-card {
             background-color: var(--card-bg);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s, box-shadow 0.3s;
             display: flex;
             flex-direction: column;
         }
 
         .project-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
 
-        .card-image {
+        .project-image {
             width: 100%;
             height: 180px;
             object-fit: cover;
             background-color: #e9ecef;
-            border-bottom: 1px solid #eee;
         }
 
-        .card-content {
-            padding: 25px;
+        .project-info {
+            padding: 20px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
-        .badges {
+        .tags {
+            margin-bottom: 10px;
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 15px;
         }
 
-        .badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75em;
+        .tag {
+            background-color: #f1f3f5;
+            color: #495057;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .badge.category { background-color: #e9ecef; color: #495057; }
-        .badge.tech { background-color: #d1ecf1; color: #0c5460; }
-        .badge.difficulty { background-color: #fff3cd; color: #856404; }
+        .project-title { font-size: 1.4em; margin: 0 0 10px 0; color: var(--primary-blue); }
+        .project-desc { font-size: 0.95em; color: #555; margin-bottom: 20px; flex-grow: 1; }
 
-        .card-title {
-            margin: 0 0 10px 0;
-            color: var(--primary-blue);
-            font-size: 1.4em;
-        }
-
-        .card-hook {
-            color: #555;
-            font-size: 0.95em;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .btn {
+        .start-btn {
+            display: block;
             text-align: center;
             background-color: var(--primary-blue);
             color: white;
@@ -128,83 +143,125 @@
             padding: 12px;
             border-radius: 6px;
             font-weight: bold;
-            transition: background 0.3s;
+            transition: 0.3s;
         }
 
-        .btn:hover { background-color: #0056b3; }
+        .start-btn:hover { background-color: #0056b3; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2em; }
+            .section-header h2 { font-size: 1.6em; }
+        }
     </style>
 </head>
 <body>
 
     <div class="navbar">
         <h2>🚀 Maha Tech Mahi</h2>
+        <div class="nav-links">
+            <a href="admin.html">Admin</a>
+        </div>
     </div>
 
     <div class="hero">
         <h1>Learn. Build. Grow.</h1>
-        <p>Master in-demand tech skills by building real-world mini-projects.</p>
+        <p>Master in-demand tech skills by building real-world projects.</p>
     </div>
 
-    <div class="container">
-        <h2 class="section-title">Latest Mini-Projects</h2>
-        
-        <div id="projects-container" class="projects-grid">
-            <p style="text-align: center; width: 100%;">Loading projects...</p>
-        </div>
+    <div class="section-header">
+        <h2>📚 Master the Basics</h2>
+        <p>Step-by-step tutorials to learn core concepts from scratch.</p>
+    </div>
+    <div class="projects-grid" id="tutorials-container">
+        <h3 style="text-align: center; width: 100%; color: #666;">Loading tutorials...</h3>
+    </div>
+
+    <div class="section-header">
+        <h2>🛠️ Build Real Projects</h2>
+        <p>Apply your skills by building exciting, end-to-end applications.</p>
+    </div>
+    <div class="projects-grid" id="projects-container">
+        <h3 style="text-align: center; width: 100%; color: #666;">Loading mini-projects...</h3>
     </div>
 
     <script>
-        // Connect to your live backend!
         const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
 
-        async function fetchProjects() {
+        async function fetchContent() {
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error("Backend asleep");
-                const projects = await response.json();
-                displayProjects(projects);
+                if (!response.ok) throw new Error("Backend not responding");
+                
+                const data = await response.json();
+                renderContent(data);
             } catch (error) {
-                document.getElementById("projects-container").innerHTML = 
-                    "<p style='color:red; text-align:center; width:100%;'>Backend is waking up! Please refresh in 60 seconds.</p>";
+                document.getElementById("tutorials-container").innerHTML = "<h3 style='color:red;'>Failed to wake up the server. Please refresh!</h3>";
+                document.getElementById("projects-container").innerHTML = "";
+                console.error(error);
             }
         }
 
-        function displayProjects(projects) {
-            const container = document.getElementById("projects-container");
-            container.innerHTML = ""; // Clear the loading text
+        function renderContent(allContent) {
+            const tutorialsContainer = document.getElementById("tutorials-container");
+            const projectsContainer = document.getElementById("projects-container");
 
+            tutorialsContainer.innerHTML = "";
+            projectsContainer.innerHTML = "";
+
+            // Filter the data based on the 'type' field
+            // If type is null (older data), default to 'Project'
+            const tutorials = allContent.filter(item => item.type === "Tutorial");
+            const projects = allContent.filter(item => item.type !== "Tutorial");
+
+            // Render Tutorials
+            if (tutorials.length === 0) {
+                tutorialsContainer.innerHTML = "<p style='color: #777;'>No tutorials available yet. Check back soon!</p>";
+            } else {
+                tutorials.forEach(tutorial => tutorialsContainer.appendChild(createCard(tutorial)));
+            }
+
+            // Render Projects
             if (projects.length === 0) {
-                container.innerHTML = "<p style='text-align:center; width:100%;'>No projects found. Add some from the Admin Dashboard!</p>";
-                return;
+                projectsContainer.innerHTML = "<p style='color: #777;'>No projects available yet. Check back soon!</p>";
+            } else {
+                projects.forEach(project => projectsContainer.appendChild(createCard(project)));
             }
-
-            projects.forEach(project => {
-                // If you didn't add an image URL, this creates a cool default image automatically!
-                const imgSrc = project.imageUrl || `https://via.placeholder.com/400x200/007bff/ffffff?text=${encodeURIComponent(project.title || 'Maha Tech Mahi')}`;
-                
-                const card = document.createElement("div");
-                card.className = "project-card";
-                
-                card.innerHTML = `
-                    <img src="${imgSrc}" alt="${project.title}" class="card-image" onerror="this.src='https://via.placeholder.com/400x200/1e1e24/ffffff?text=Project'">
-                    <div class="card-content">
-                        <div class="badges">
-                            <span class="badge category">${project.category || 'General'}</span>
-                            <span class="badge tech">${project.techStack || 'Code'}</span>
-                            <span class="badge difficulty">${project.difficulty || 'All Levels'}</span>
-                        </div>
-                        <h3 class="card-title">${project.title || 'Untitled Project'}</h3>
-                        <p class="card-hook">${project.description || 'Dive into this exciting new tutorial!'}</p>
-                        
-                        <a href="blog.html?id=${project.id}" class="btn">Start Building</a>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
         }
 
-        // Run this function the moment the page loads
-        window.onload = fetchProjects;
+        function createCard(item) {
+            const card = document.createElement("div");
+            card.className = "project-card";
+
+            // Determine image
+            let imageSource = `https://via.placeholder.com/600x300/007bff/ffffff?text=${encodeURIComponent(item.title || 'Maha Tech Mahi')}`;
+            if (item.imageUrl && item.imageUrl.trim() !== "") {
+                imageSource = item.imageUrl;
+            } else if (item.youtubeId && item.youtubeId.trim() !== "") {
+                imageSource = `https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`;
+            }
+
+            // Build HTML
+            card.innerHTML = `
+                <img src="${imageSource}" alt="${item.title}" class="project-image">
+                <div class="project-info">
+                    <div class="tags">
+                        <span class="tag">${item.category || 'General'}</span>
+                        <span class="tag" style="background-color: #d1ecf1; color: #0c5460;">${item.techStack || 'Code'}</span>
+                        <span class="tag" style="background-color: #fff3cd; color: #856404;">${item.difficulty || 'All Levels'}</span>
+                    </div>
+                    <h3 class="project-title">${item.title || 'Untitled'}</h3>
+                    <p class="project-desc">${item.description || 'Dive into this exciting new tutorial!'}</p>
+                    <a href="blog.html?id=${item.id}" class="start-btn">
+                        ${item.type === 'Tutorial' ? 'Start Reading' : 'Start Building'}
+                    </a>
+                </div>
+            `;
+            return card;
+        }
+
+        // Run on load
+        window.onload = fetchContent;
     </script>
 </body>
 </html>
