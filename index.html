@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maha Tech Mahi - Project-Based Learning</title>
-    <style>
-        /* Shared Modern CSS */
+    <link rel="icon" type="image/png" href="logo.png">
+   <style>
+    /* Shared Modern CSS */
         :root {
             --primary-blue: #007bff;
             --dark-bg: #1e1e24;
@@ -23,36 +24,76 @@
 
         /* Navigation */
         .navbar {
-            background-color: var(--dark-bg);
-            color: white;
-            padding: 15px 30px;
+            background-color: #ffffff; /* Updated to clean white */
+            color: #333333;
+            padding: 10px 30px;
+            border-bottom: 1px solid #eeeeee;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .navbar h2 { margin: 0; font-size: 22px; }
-
-        .nav-links a {
-            color: white;
+        .logo-link {
             text-decoration: none;
-            margin-left: 20px;
-            font-weight: bold;
-            transition: 0.3s;
+            border: none;
         }
-        
-        .nav-links a:hover { color: var(--primary-blue); }
 
-        /* Hero Section */
+        .nav-logo {
+            height: 60px; /* Adjust this to get the perfect size */
+            width: auto;
+            display: block;
+        }
+
+        /* Search Bar Styling */
+        .search-container {
+            flex-grow: 1;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-blue); /* Bold blue border */
+            outline: none;
+            font-size: 14px;
+            background-color: #ffffff;
+            color: #333333;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Slight shadow to make it pop */
+        }
+
+        .search-input::placeholder { color: #666666; font-weight: 500; } /* Darker placeholder text */
+        .search-input:focus { box-shadow: 0 0 10px rgba(0, 123, 255, 0.4); }
+
+       /* Hero Section */
         .hero {
-            background-color: var(--primary-blue);
+            /* Modern deep-blue to bright-blue gradient */
+            background: linear-gradient(135deg, #001F42 0%, #007bff 100%);
             color: white;
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px;
+            border-bottom: 5px solid #ff9900; /* Orange accent line matching your logo */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .hero h1 { font-size: 3em; margin: 0; }
-        .hero p { font-size: 1.2em; margin-top: 10px; opacity: 0.9; }
+        .hero h1 { 
+            font-size: 3.5em; 
+            margin: 0; 
+            font-weight: 800; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* Adds depth to the text */
+        }
+        
+        .hero p { 
+            font-size: 1.4em; 
+            margin-top: 15px; 
+            color: #e9ecef; 
+        }
 
         /* Section Headers */
         .section-header {
@@ -63,17 +104,8 @@
             padding-bottom: 10px;
         }
 
-        .section-header h2 {
-            font-size: 2em;
-            color: var(--dark-bg);
-            margin: 0;
-        }
-
-        .section-header p {
-            color: #666;
-            margin: 5px 0 0 0;
-            font-size: 1.1em;
-        }
+        .section-header h2 { font-size: 2em; color: var(--dark-bg); margin: 0; }
+        .section-header p { color: #666; margin: 5px 0 0 0; font-size: 1.1em; }
 
         /* Project & Tutorial Grids */
         .projects-grid {
@@ -105,6 +137,7 @@
             height: 180px;
             object-fit: cover;
             background-color: #e9ecef;
+            display: block;
         }
 
         .project-info {
@@ -114,13 +147,7 @@
             flex-direction: column;
         }
 
-        .tags {
-            margin-bottom: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
+        .tags { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
         .tag {
             background-color: #f1f3f5;
             color: #495057;
@@ -137,7 +164,7 @@
         .start-btn {
             display: block;
             text-align: center;
-            background-color: var(--primary-blue);
+            background-color: #002D62; /* Updated to Oxford Blue */
             color: white;
             text-decoration: none;
             padding: 12px;
@@ -146,26 +173,74 @@
             transition: 0.3s;
         }
 
-        .start-btn:hover { background-color: #0056b3; }
+        .start-btn:hover { background-color: #001F42; }
 
         /* Mobile Adjustments */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.2em; }
             .section-header h2 { font-size: 1.6em; }
+            .search-container { max-width: 100%; order: 3; width: 100%; }
         }
+
+/* Footer Styling */
+        .site-footer {
+            background-color: var(--dark-bg);
+            color: #f8f9fa;
+            padding: 50px 20px 20px 20px;
+            margin-top: 60px;
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .footer-section p { color: #aaa; line-height: 1.6; }
+
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: white; padding-left: 5px; }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #777;
+            font-size: 0.9em;
+        }
+
     </style>
 </head>
 <body>
-
-    <div class="navbar">
-        <h2>🚀 Maha Tech Mahi</h2>
-        <div class="nav-links">
-            <a href="admin.html">Admin</a>
+<div class="navbar">
+        <a href="index.html" class="logo-link" style="display: flex; align-items: center; gap: 15px;">
+            <img src="logo.png" alt="Maha Tech Mahi Logo" class="nav-logo">
+            <h2 style="margin: 0; font-size: 26px; color: #002D62; font-weight: 900; letter-spacing: 1px;">MAHA TECH MAHI</h2>
+        </a>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search Java, Spring Boot, etc...">
         </div>
     </div>
-
+   
     <div class="hero">
-        <h1>Learn. Build. Grow.</h1>
+        <h1>Learn. Build. Grow!</h1>
+        <h3> Think Logic. Create Magic.</h3>
         <p>Master in-demand tech skills by building real-world projects.</p>
     </div>
 
@@ -185,16 +260,53 @@
         <h3 style="text-align: center; width: 100%; color: #666;">Loading mini-projects...</h3>
     </div>
 
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Maha Tech Mahi</h3>
+                <p>Empowering the next generation of developers with hands-on, project-based learning. Founded by Mahalinga Raya to help you master tech from zero to hero.</p>
+                <p style="margin-top: 15px; color: #888; font-weight: bold;">📍 Bengaluru, Karnataka, India</p>
+                
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497698.6600679883!2d77.30125862378932!3d12.954517013861215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1690000000000!5m2!1sen!2sin" 
+                    width="100%" height="120" style="border:0; border-radius:8px; margin-top:10px; opacity: 0.8;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#tutorials-container">Tutorials</a></li>
+                    <li><a href="#projects-container">Mini-Projects</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Connect With Me</h3>
+                <ul class="footer-links">
+                    <li><a href="https://www.youtube.com/@MAHATECHMAHI/posts" target="_blank">📺 YouTube</a></li>
+                    <li><a href="https://www.instagram.com/maha_tech_mahi/" target="_blank">📸 Instagram</a></li>
+                    <li><a href="https://github.com/MahalingaRaya" target="_blank">💻 GitHub</a></li>
+                    <li><a href="https://www.linkedin.com/in/mahalingaraya" target="_blank">🔗 LinkedIn</a></li>
+                    <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=mahatechmahi@gmail.com" target="_blank">✉️ Contact Support (Gmail)</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Maha Tech Mahi. Designed & Built by Mahalinga Raya.</p>
+        </div>
+    </footer>
     <script>
         const API_URL = "https://mahatechmahi-backend.onrender.com/api/courses";
+        let globalContent = []; // Holds all data for searching
 
         async function fetchContent() {
             try {
                 const response = await fetch(API_URL);
                 if (!response.ok) throw new Error("Backend not responding");
                 
-                const data = await response.json();
-                renderContent(data);
+                globalContent = await response.json();
+                renderContent(globalContent);
             } catch (error) {
                 document.getElementById("tutorials-container").innerHTML = "<h3 style='color:red;'>Failed to wake up the server. Please refresh!</h3>";
                 document.getElementById("projects-container").innerHTML = "";
@@ -202,28 +314,26 @@
             }
         }
 
-        function renderContent(allContent) {
+        function renderContent(contentToRender) {
             const tutorialsContainer = document.getElementById("tutorials-container");
             const projectsContainer = document.getElementById("projects-container");
 
             tutorialsContainer.innerHTML = "";
             projectsContainer.innerHTML = "";
 
-            // Filter the data based on the 'type' field
-            // If type is null (older data), default to 'Project'
-            const tutorials = allContent.filter(item => item.type === "Tutorial");
-            const projects = allContent.filter(item => item.type !== "Tutorial");
+            const tutorials = contentToRender.filter(item => item.type === "Tutorial");
+            const projects = contentToRender.filter(item => item.type !== "Tutorial");
 
             // Render Tutorials
             if (tutorials.length === 0) {
-                tutorialsContainer.innerHTML = "<p style='color: #777;'>No tutorials available yet. Check back soon!</p>";
+                tutorialsContainer.innerHTML = "<p style='color: #777;'>No matching tutorials found.</p>";
             } else {
                 tutorials.forEach(tutorial => tutorialsContainer.appendChild(createCard(tutorial)));
             }
 
             // Render Projects
             if (projects.length === 0) {
-                projectsContainer.innerHTML = "<p style='color: #777;'>No projects available yet. Check back soon!</p>";
+                projectsContainer.innerHTML = "<p style='color: #777;'>No matching projects found.</p>";
             } else {
                 projects.forEach(project => projectsContainer.appendChild(createCard(project)));
             }
@@ -241,9 +351,9 @@
                 imageSource = `https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg`;
             }
 
-            // Build HTML
+            // Add an error handler fallback just in case an image link is broken
             card.innerHTML = `
-                <img src="${imageSource}" alt="${item.title}" class="project-image">
+                <img src="${imageSource}" alt="${item.title}" class="project-image" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x300/007bff/ffffff?text=Image+Not+Found';">
                 <div class="project-info">
                     <div class="tags">
                         <span class="tag">${item.category || 'General'}</span>
@@ -259,6 +369,21 @@
             `;
             return card;
         }
+
+        // NEW: Real-time Search Logic
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            const filteredContent = globalContent.filter(item => {
+                const titleMatch = (item.title || "").toLowerCase().includes(searchTerm);
+                const techMatch = (item.techStack || "").toLowerCase().includes(searchTerm);
+                const categoryMatch = (item.category || "").toLowerCase().includes(searchTerm);
+                
+                return titleMatch || techMatch || categoryMatch;
+            });
+
+            renderContent(filteredContent);
+        });
 
         // Run on load
         window.onload = fetchContent;
