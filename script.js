@@ -85,6 +85,9 @@ window.onload = fetchContent;
 
 // --- CHATBOT LOGIC ---
 
+// 🧠 NEW: This array is the AI's short-term memory!
+let chatHistory = []; 
+
 function toggleChat() {
     document.getElementById('chatbot-container').classList.toggle('hidden');
 }
@@ -104,6 +107,7 @@ async function sendMessage() {
 
     const chatWindow = document.getElementById('chat-window');
     
+    // 1. Show the student's message on screen
     const userBubble = document.createElement('div');
     userBubble.className = 'chat-message user-message';
     userBubble.textContent = message;
@@ -111,6 +115,10 @@ async function sendMessage() {
     inputField.value = '';
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
+    // 2. Save the student's message to memory
+    chatHistory.push({ role: "user", content: message });
+
+    // 3. Show the thinking bubble
     const thinkingBubble = document.createElement('div');
     thinkingBubble.className = 'chat-message bot-message';
     thinkingBubble.textContent = 'Maha Tech Mahi is thinking...';
@@ -118,10 +126,11 @@ async function sendMessage() {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
     try {
+        // 4. Send the ENTIRE memory to the Java backend
         const response = await fetch('https://mahatechmahi-backend.onrender.com/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({ history: chatHistory }) 
         });
         
         const data = await response.json();
@@ -130,7 +139,13 @@ async function sendMessage() {
         formattedReply = formattedReply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         formattedReply = formattedReply.replace(/`(.*?)`/g, '<code style="background:#ddd;padding:2px 4px;border-radius:4px;">$1</code>');
         
+        // 5. Update the bubble with the real answer
         thinkingBubble.innerHTML = formattedReply;
+        
+        // 6. Save the AI's answer to memory so it remembers for next time!
+        if (!data.reply.includes("Server Error")) {
+            chatHistory.push({ role: "assistant", content: data.reply });
+        }
         
     } catch (error) {
         thinkingBubble.textContent = "Error: Cannot connect to Maha Tech Mahi. Please try again.";
