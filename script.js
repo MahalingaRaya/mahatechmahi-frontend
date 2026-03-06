@@ -113,7 +113,7 @@ async function sendMessage() {
 
     const thinkingBubble = document.createElement('div');
     thinkingBubble.className = 'chat-message bot-message';
-    thinkingBubble.textContent = 'Maha Bot is thinking...';
+    thinkingBubble.textContent = 'Maha Tech Mahi is thinking...';
     chatWindow.appendChild(thinkingBubble);
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
@@ -133,7 +133,7 @@ async function sendMessage() {
         thinkingBubble.innerHTML = formattedReply;
         
     } catch (error) {
-        thinkingBubble.textContent = "Error: Cannot connect to Maha Bot. Please try again.";
+        thinkingBubble.textContent = "Error: Cannot connect to Maha Tech Mahi. Please try again.";
         console.error(error);
     }
     chatWindow.scrollTop = chatWindow.scrollHeight;
